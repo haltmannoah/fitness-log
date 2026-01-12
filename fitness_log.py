@@ -5,14 +5,16 @@ root.title("Fitness Log")
 root.geometry("520x360")
 root.resizable(False, False)
 
-# Title
-title = tk.Label(root, text="Fitness Log", font=("Arial", 18, "bold"))
-title.pack(pady=(12, 6))
-
-# Input frame
-input_frame = tk.Frame(root)
-input_frame.pack(padx=16, pady=8, fill="x")
 sets = []
+
+top = tk.Frame(root)
+top.pack(fill="x", padx=16, pady=10)
+
+title = tk.Label(top, text="Fitness Log", font=("Arial", 18, "bold"))
+title.pack(anchor="w")
+
+input_frame = tk.Frame(top)
+input_frame.pack(fill="x", pady=(10, 0))
 
 # Exercise
 tk.Label(input_frame, text="Exercise:").grid(row=0, column=0, sticky="w")
@@ -28,56 +30,57 @@ weight_entry.grid(row=1, column=1, padx=(0, 12), pady=(2, 8), sticky="w")
 tk.Label(input_frame, text="Reps:").grid(row=0, column=2, sticky="w")
 reps_entry = tk.Entry(input_frame, width=10)
 reps_entry.grid(row=1, column=2, pady=(2, 8), sticky="w")
-# Log label
-log_label = tk.Label(root, text="Session Log:", font=("Arial", 12, "bold"))
-log_label.pack(anchor="w", padx=16)
 
-# Log frame
-log_frame = tk.Frame(root)
-log_frame.pack(padx=16, pady=(6, 12), fill="both", expand=True)
+status_label = tk.Label(top, text="", fg="red")
+status_label.pack(anchor="w", pady=(0, 6))
 
-# Listbox 
-log_listbox = tk.Listbox(log_frame, height=10)
-log_listbox.pack(side="left", fill="both", expand=True)
-
-# Scrollbar
-scrollbar = tk.Scrollbar(log_frame, orient="vertical", command=log_listbox.yview)
-scrollbar.pack(side="right", fill="y")
-log_listbox.config(yscrollcommand=scrollbar.set)
-
-
-# 
 def on_add_set():
     exercise = exercise_entry.get().strip()
     weight = weight_entry.get().strip()
     reps = reps_entry.get().strip()
 
-    # validation 
     if exercise == "" or weight == "" or reps == "":
-        print("Fill all fields.")
+        status_label.config(text="Fill all fields.", fg="red")
         return
+
     if not weight.isdigit() or not reps.isdigit():
-        print("Weight and reps must be whole numbers.")
+        status_label.config(text="Weight and reps must be whole numbers.", fg="red")
         return
 
-    weight = int(weight)
-    reps = int(reps)
+    weight_i = int(weight)
+    reps_i = int(reps)
 
-    # store it in memory
-    sets.append([exercise, weight, reps])
+    sets.append([exercise, weight_i, reps_i])
 
-    # show it in the UI
-    line = f"{exercise} | {weight} | {reps}"
+    line = f"{exercise} | {weight_i} | {reps_i}"
     log_listbox.insert(tk.END, line)
 
-    # inputs for next set
     exercise_entry.delete(0, tk.END)
     weight_entry.delete(0, tk.END)
     reps_entry.delete(0, tk.END)
     exercise_entry.focus()
-    
-add_button = tk.Button(root, text="Add Set", command=on_add_set, width=12)
-add_button.pack(pady=(0, 10))
+
+    status_label.config(text="Set added!", fg="green")
+
+add_button = tk.Button(top, text="Add Set", command=on_add_set, width=12)
+add_button.pack(anchor="w", pady=(0, 6))
 
 
+bottom = tk.Frame(root)
+bottom.pack(fill="both", expand=True, padx=16, pady=(0, 12))
+
+log_label = tk.Label(bottom, text="Session Log:", font=("Arial", 12, "bold"))
+log_label.pack(anchor="w")
+
+log_frame = tk.Frame(bottom)
+log_frame.pack(fill="both", expand=True, pady=(6, 0))
+
+log_listbox = tk.Listbox(log_frame, height=10)
+log_listbox.pack(side="left", fill="both", expand=True)
+
+scrollbar = tk.Scrollbar(log_frame, orient="vertical", command=log_listbox.yview)
+scrollbar.pack(side="right", fill="y")
+log_listbox.config(yscrollcommand=scrollbar.set)
+
+exercise_entry.focus()
 root.mainloop()
