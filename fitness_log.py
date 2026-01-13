@@ -33,6 +33,8 @@ reps_entry.grid(row=1, column=2, pady=(2, 8), sticky="w")
 
 status_label = tk.Label(top, text="", fg="red")
 status_label.pack(anchor="w", pady=(0, 6))
+counter_label = tk.Label(top, text="Sets logged: 0", font=("Arial", 11))
+counter_label.pack(anchor="w", pady=(0, 6))
 
 def on_add_set():
     exercise = exercise_entry.get().strip()
@@ -61,6 +63,7 @@ def on_add_set():
     exercise_entry.focus()
 
     status_label.config(text="Set added!", fg="green")
+    counter_label.config(text=f"Sets logged: {len(sets)}")
 
 add_button = tk.Button(top, text="Add Set", command=on_add_set, width=12)
 add_button.pack(anchor="w", pady=(0, 6))
